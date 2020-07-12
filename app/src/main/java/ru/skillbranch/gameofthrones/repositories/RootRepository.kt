@@ -1,12 +1,14 @@
 package ru.skillbranch.gameofthrones.repositories
 
 import androidx.annotation.VisibleForTesting
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import ru.skillbranch.gameofthrones.GameOfThronesApp
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterFull
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterItem
 import ru.skillbranch.gameofthrones.data.remote.res.CharacterRes
 import ru.skillbranch.gameofthrones.data.remote.res.HouseRes
-import ru.skillbranch.gameofthrones.data.remote.retrofit.CustomCallback
+import ru.skillbranch.gameofthrones.data.remote.retrofit.ServerErrorSubscriber
 
 object RootRepository {
 
@@ -17,17 +19,18 @@ object RootRepository {
      * @param result - колбек содержащий в себе список данных о домах
      * @param error - колбек с ошибкой
      */
-    //@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun getAllHouses(result : (houses : List<HouseRes>) -> Unit) {
-        val call = api.getAllHouses()
-        call.enqueue(CustomCallback(
-            onSuccess = {
-                result.invoke(it)
-            },
-            onError = {
-                //error?.invoke(it)
-            }
-        ))
+        api.getAllHouses()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(ServerErrorSubscriber(
+                onSuccess = {
+                    result.invoke(it)
+                },
+                onError = {}
+            ))
+
     }
 
     /**

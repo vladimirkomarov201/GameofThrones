@@ -13,7 +13,8 @@ class GameOfThronesApp: Application() {
         super.onCreate()
         val component = DaggerAppComponent.builder().appModule(
             AppModule(
-                context = applicationContext
+                context = applicationContext,
+                db = buildDatabase()
             )
         ).build()
         di = DI(component)
