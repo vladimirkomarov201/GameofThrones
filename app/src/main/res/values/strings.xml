@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Game of Thrones</string>
+
+    <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="network_error">Ошибка интернет соединения</string>
+    <string name="server_timeout">Сервер не отвечает</string>
+    <string name="network_error_splash_screen">Интернет недоступен - приложение не может быть запущено. Подключитесь к интернету и перезапустите приложение</string>
+
+
 </resources>

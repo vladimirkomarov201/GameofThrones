@@ -4,6 +4,7 @@ import android.content.Context
 import dagger.Component
 import ru.skillbranch.gameofthrones.data.local.dagger.modules.AppModule
 import ru.skillbranch.gameofthrones.data.local.dagger.modules.RepositoryModule
+import ru.skillbranch.gameofthrones.data.remote.retrofit.ApiService
 import javax.inject.Singleton
 
 @Singleton
@@ -12,4 +13,5 @@ interface AppComponent {
     fun createViewModelComponent(): ViewModelComponent
     fun createRepositoryComponent(): RepositoryComponent
     fun getContext(): Context
+    fun getApi(): ApiService
 }

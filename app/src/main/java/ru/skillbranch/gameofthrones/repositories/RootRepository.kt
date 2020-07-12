@@ -1,20 +1,33 @@
 package ru.skillbranch.gameofthrones.repositories
 
 import androidx.annotation.VisibleForTesting
+import ru.skillbranch.gameofthrones.GameOfThronesApp
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterFull
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterItem
 import ru.skillbranch.gameofthrones.data.remote.res.CharacterRes
 import ru.skillbranch.gameofthrones.data.remote.res.HouseRes
+import ru.skillbranch.gameofthrones.data.remote.retrofit.CustomCallback
 
 object RootRepository {
 
+    private val api = GameOfThronesApp.di.getComponent().getApi()
+
     /**
-     * Получение данных о всех домах из сети
+     * Получение данных о всех домах из сетиCustomCallback.kt
      * @param result - колбек содержащий в себе список данных о домах
+     * @param error - колбек с ошибкой
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    //@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun getAllHouses(result : (houses : List<HouseRes>) -> Unit) {
-        //TODO implement me
+        val call = api.getAllHouses()
+        call.enqueue(CustomCallback(
+            onSuccess = {
+                result.invoke(it)
+            },
+            onError = {
+                //error?.invoke(it)
+            }
+        ))
     }
 
     /**
