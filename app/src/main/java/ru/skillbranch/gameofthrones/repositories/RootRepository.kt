@@ -13,6 +13,7 @@ import ru.skillbranch.gameofthrones.data.remote.retrofit.ServerErrorSubscriber
 object RootRepository {
 
     private val api = GameOfThronesApp.di.getComponent().getApi()
+    private val dbRepository = GameOfThronesApp.di.getComponent().createRepositoryComponent().getDatabaseRepository()
 
     /**
      * Получение данных о всех домах из сетиCustomCallback.kt
@@ -61,7 +62,16 @@ object RootRepository {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun insertHouses(houses : List<HouseRes>, complete: () -> Unit) {
-        //TODO implement me
+        dbRepository.insertHouses(houses)
+            .observeOn(Schedulers.io())
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .doAfterSuccess {
+                complete.invoke()
+            }
+            .doOnError{
+                throw it
+            }
+            .subscribe()
     }
 
     /**
@@ -72,7 +82,16 @@ object RootRepository {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun insertCharacters(Characters : List<CharacterRes>, complete: () -> Unit) {
-        //TODO implement me
+        dbRepository.insertCharacters(Characters)
+            .observeOn(Schedulers.io())
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .doAfterSuccess {
+                complete.invoke()
+            }
+            .doOnError{
+                throw it
+            }
+            .subscribe()
     }
 
     /**
@@ -81,7 +100,16 @@ object RootRepository {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun dropDb(complete: () -> Unit) {
-        //TODO implement me
+        dbRepository.drop()
+            .observeOn(Schedulers.io())
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .doOnComplete {
+                complete.invoke()
+            }
+            .doOnError {
+                throw it
+            }
+            .subscribe()
     }
 
     /**
@@ -111,7 +139,16 @@ object RootRepository {
      * @param result - колбек о завершении очистки db
      */
     fun isNeedUpdate(result: (isNeed : Boolean) -> Unit){
-        //TODO implement me
+        dbRepository.needUpdate()
+            .observeOn(Schedulers.io())
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .doAfterSuccess {
+                result.invoke(it)
+            }
+            .doOnError {
+                throw it
+            }
+            .subscribe()
     }
 
 }
