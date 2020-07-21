@@ -28,6 +28,12 @@ class SplashFragment: BaseFragment() {
         viewModel.textEvent.observe(viewLifecycleOwner, Observer {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         })
+        viewModel.networkException.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(requireContext(), "network", Toast.LENGTH_SHORT).show()
+        })
+        viewModel.goNextScreen.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(requireContext(), "next", Toast.LENGTH_SHORT).show()
+        })
         return view
     }
 

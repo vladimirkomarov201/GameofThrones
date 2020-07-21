@@ -42,7 +42,7 @@ class RoomDatabaseRepository(
                                 AncestralWeapon(0, id, it)
                             })
                         Single.merge(houseTitles, seatsInsert, ancestralWeaponsInsert)
-                            .observeOn(Schedulers.io())
+                            .subscribeOn(Schedulers.io())
                             .subscribe()
                     }
                     .doOnError {
@@ -64,7 +64,7 @@ class RoomDatabaseRepository(
                             Alias(0, id, it)
                         })
                         Single.merge(houseTitles, aliasesInsert)
-                            .observeOn(Schedulers.io())
+                            .subscribeOn(Schedulers.io())
                             .subscribe()
                     }
                     .doOnError {

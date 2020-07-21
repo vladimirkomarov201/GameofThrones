@@ -8,7 +8,6 @@ import ru.skillbranch.gameofthrones.data.local.entities.CharacterFull
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterItem
 import ru.skillbranch.gameofthrones.data.remote.res.CharacterRes
 import ru.skillbranch.gameofthrones.data.remote.res.HouseRes
-import ru.skillbranch.gameofthrones.data.remote.retrofit.ServerErrorSubscriber
 
 object RootRepository {
 
@@ -25,12 +24,10 @@ object RootRepository {
         api.getAllHouses()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(ServerErrorSubscriber(
-                onSuccess = {
-                    result.invoke(it)
-                },
-                onError = {}
-            ))
+            .doOnSuccess {
+                result.invoke(it)
+            }
+            .subscribe()
 
     }
 
@@ -63,8 +60,8 @@ object RootRepository {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun insertHouses(houses : List<HouseRes>, complete: () -> Unit) {
         dbRepository.insertHouses(houses)
-            .observeOn(Schedulers.io())
-            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .doAfterSuccess {
                 complete.invoke()
             }
@@ -83,8 +80,8 @@ object RootRepository {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun insertCharacters(Characters : List<CharacterRes>, complete: () -> Unit) {
         dbRepository.insertCharacters(Characters)
-            .observeOn(Schedulers.io())
-            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .doAfterSuccess {
                 complete.invoke()
             }
@@ -101,8 +98,8 @@ object RootRepository {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun dropDb(complete: () -> Unit) {
         dbRepository.drop()
-            .observeOn(Schedulers.io())
-            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {
                 complete.invoke()
             }
@@ -140,8 +137,8 @@ object RootRepository {
      */
     fun isNeedUpdate(result: (isNeed : Boolean) -> Unit){
         dbRepository.needUpdate()
-            .observeOn(Schedulers.io())
-            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .doAfterSuccess {
                 result.invoke(it)
             }
