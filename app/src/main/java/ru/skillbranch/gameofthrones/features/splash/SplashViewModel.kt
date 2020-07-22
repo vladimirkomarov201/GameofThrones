@@ -6,6 +6,7 @@ import android.util.Log
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import ru.skillbranch.gameofthrones.GameOfThronesApp
 import ru.skillbranch.gameofthrones.base.BaseViewModel
@@ -13,6 +14,7 @@ import ru.skillbranch.gameofthrones.base.LiveEvent
 import ru.skillbranch.gameofthrones.data.remote.retrofit.ApiService
 import ru.skillbranch.gameofthrones.repositories.DatabaseRepository
 import ru.skillbranch.gameofthrones.utils.Utils
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SplashViewModel(app: Application): BaseViewModel(app) {
@@ -26,6 +28,8 @@ class SplashViewModel(app: Application): BaseViewModel(app) {
 
     private val TAG = SplashViewModel::class.simpleName
 
+    private var dataCall: Disposable? = null
+
     init {
         GameOfThronesApp.di.getComponent().createViewModelComponent().injectSplashViewModel(this)
         getDataFromServerAndCache()
@@ -33,9 +37,9 @@ class SplashViewModel(app: Application): BaseViewModel(app) {
 
 
     private fun getDataFromServerAndCache(){
-        databaseRepository.needUpdate()
+        dataCall = databaseRepository.needUpdate()
             .subscribeOn(Schedulers.io())
-            //.timeout(5L, TimeUnit.SECONDS)
+            .timeout(5L, TimeUnit.SECONDS)
             .flatMapMaybe {needUpdate ->
                 when{
                     needUpdate && Utils.isNetworkAvailable() -> {
@@ -55,16 +59,23 @@ class SplashViewModel(app: Application): BaseViewModel(app) {
                 }
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess {
+            .doOnComplete {
                 goNextScreen.call()
             }
-            .doOnError {
+            .subscribe({
+                goNextScreen.call()
+            }, {
+                Log.e(TAG, "error", it)
                 if (it is NetworkErrorException)
                     networkException.call()
                 else
-                    Log.e(TAG, "error", it)
-            }
-            .subscribe()
+                    goNextScreen.call()
+            })
+    }
+
+    override fun onCleared() {
+        dataCall?.dispose()
+        super.onCleared()
     }
 
 }

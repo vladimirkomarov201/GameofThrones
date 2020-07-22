@@ -9,6 +9,16 @@
         android:id="@+id/splash_fragment"
         android:name="ru.skillbranch.gameofthrones.features.splash.SplashFragment"
         android:label="SplashFragment"
-        tools:layout="@layout/fragment_splash"/>
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/action_splash_fragment_to_characters_list_fragment"
+            app:destination="@id/characters_list_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/characters_list_fragment"
+        android:name="ru.skillbranch.gameofthrones.features.charactersList.CharactersListFragment"
+        android:label="CharactersListFragment"
+        tools:layout="@layout/fragment_characters_list"/>
 
 </navigation>
